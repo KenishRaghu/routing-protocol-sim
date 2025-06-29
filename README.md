@@ -1,29 +1,32 @@
-# Routing Protocol Simulation Toolkit (Upgraded)
+# Routing Protocol Simulation Toolkit
 
-Simulates simplified BGP and OSPF routing behavior using Linux network namespaces and virtual Ethernet pairs.
-Supports packet tracing, route table validation, and FRRouting-style decision logic.
+Simple toolkit to simulate BGP and OSPF routing protocols.
+
+## Quick Start
+
+```bash
+# Build
+make
+
+# Run BGP simulation
+./routing_sim bgp 5
+
+# Run OSPF simulation  
+./routing_sim ospf 8
+
+# Run tests
+make test
+
+# Performance analysis
+python3 python/analyzer.py test_results.json
+```
 
 ## Features
-- Linux-based simulation using `ip netns` and `veth`
-- BGP and OSPF simulators in C
-- Python analysis script for route convergence
-- Packet capture via tcpdump and .pcap output
-- Routing table validation
-- Simulated BGP behavior similar to FRRouting
 
-## Getting Started
-```bash
-sudo ./scripts/setup_topology.sh
-make
-sudo ip netns exec R1 ./bgp_sim
-sudo ip netns exec R2 ./bgp_sim
-sudo ./scripts/analyze_routes.py
-```
+- BGP and OSPF protocol simulation
+- Convergence time measurement
+- Python analysis tools
+- Automated testing scripts
+- Performance monitoring
 
-## Teardown
-```bash
-sudo ./scripts/teardown_topology.sh
-```
-
-## License
-MIT
+Built with C, Python, and shell scripting for Linux environments.
