@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -std=c99 -g
 TARGET = routing_sim
-SOURCES = src/main.c
+SOURCES = src/main.c src/bgp.c src/ospf.c
 
 .PHONY: all clean debug test
 
