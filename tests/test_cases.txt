@@ -1,0 +1,7 @@
+# Protocol  Node_Count  Description
+bgp         3           Basic triangle topology
+bgp         5           Medium ring topology with additional links
+bgp         8           Dense mesh test
+ospf        3           Basic triangle with OSPF
+ospf        5           Medium scale OSPF convergence test
+ospf        8           Dense mesh under link-state routing

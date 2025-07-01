@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "=== Running Routing Protocol Tests ==="
+echo "=== Running Routing Protocol Tests from test_cases.txt ==="
 make clean && make
 
 if [ ! -f "./routing_sim" ]; then
@@ -10,40 +10,21 @@ fi
 RESULTS="test_results.json"
 echo "[" > $RESULTS
 
-test_bgp() {
-    echo "Testing BGP with $1 nodes..."
-    timeout 10 ./routing_sim bgp $1 > test_output.txt 2>&1
+while read -r protocol nodes description; do
+    [[ "$protocol" =~ ^#.*$ || -z "$protocol" ]] && continue
+
+    echo "Testing $protocol with $nodes nodes... ($description)"
+    timeout 10 ./routing_sim $protocol $nodes > test_output.txt 2>&1
 
     if grep -q "converged" test_output.txt; then
         conv_time=$(grep "Convergence Time" test_output.txt | grep -o '[0-9]\+')
-        echo "  ✓ BGP converged in ${conv_time}ms"
-        echo "  {\"protocol\": \"bgp\", \"nodes\": $1, \"converged\": true, \"convergence_ms\": $conv_time}," >> $RESULTS
+        echo "  ✓ $protocol converged in ${conv_time}ms"
+        echo "  {\"protocol\": \"$protocol\", \"nodes\": $nodes, \"description\": \"$description\", \"converged\": true, \"convergence_ms\": $conv_time}," >> $RESULTS
     else
-        echo "  ✗ BGP failed to converge"
-        echo "  {\"protocol\": \"bgp\", \"nodes\": $1, \"converged\": false}," >> $RESULTS
+        echo "  ✗ $protocol failed to converge"
+        echo "  {\"protocol\": \"$protocol\", \"nodes\": $nodes, \"description\": \"$description\", \"converged\": false}," >> $RESULTS
     fi
-}
-
-test_ospf() {
-    echo "Testing OSPF with $1 nodes..."
-    timeout 10 ./routing_sim ospf $1 > test_output.txt 2>&1
-
-    if grep -q "converged" test_output.txt; then
-        conv_time=$(grep "Convergence Time" test_output.txt | grep -o '[0-9]\+')
-        echo "  ✓ OSPF converged in ${conv_time}ms"
-        echo "  {\"protocol\": \"ospf\", \"nodes\": $1, \"converged\": true, \"convergence_ms\": $conv_time}," >> $RESULTS
-    else
-        echo "  ✗ OSPF failed to converge"
-        echo "  {\"protocol\": \"ospf\", \"nodes\": $1, \"converged\": false}," >> $RESULTS
-    fi
-}
-
-test_bgp 3
-test_bgp 5
-test_bgp 8
-test_ospf 3
-test_ospf 5
-test_ospf 8
+done < tests/test_cases.txt
 
 sed -i '$ s/,$//' $RESULTS
 echo "]" >> $RESULTS
